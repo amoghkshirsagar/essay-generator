@@ -4,13 +4,20 @@ from customtkinter import CTk, CTkFrame, CTkButton, CTkLabel, CTkScrollableFrame
 from ai.ai import generate_structured_response, generate_content
 
 
-def generateEssay(entryList):
+def generateEssay(entryList, parent):
     topic = entryList['topic']['entry']
     wordCount = entryList['wordCount']['entry']
     additionalDetails = entryList['additionalDetails']['entry']
 
     essay = generate_content(topic.get(), wordCount.get(), additionalDetails.get())
-    print(essay)
+
+    essayFrame = ctk.CTkScrollableFrame(parent, fg_color="#00224B",  height= 50)
+    essayFrame.grid(row=1, column=1, sticky="NSEW", padx=5, pady=5)
+    essayFrame.rowconfigure(0, weight=1)
+    essayFrame.columnconfigure(0, weight=1)
+
+    essayDisplay: CTkLabel = ctk.CTkLabel(essayFrame, fg_color="#001B3A", text=essay, wraplength=300)
+    essayDisplay.grid(row=0, column=0, sticky="NSEW", padx=10, pady=5)
 
 def chatUI(parent):
     entryBoxRow = ctk.CTkFrame(parent, fg_color="#00224B",  height= 50)
@@ -27,7 +34,5 @@ def chatUI(parent):
         value['entry'] = ctk.CTkEntry(entryBoxRow, placeholder_text=value['label'])
         value['entry'].grid(row=1, column=i+1, sticky="ew", padx=5, pady=20)
 
-    sendToAiButton: CTkButton = ctk.CTkButton(entryBoxRow, text="Send ↑", command=lambda: generateEssay(entryList))
+    sendToAiButton: CTkButton = ctk.CTkButton(entryBoxRow, text="Send ↑", command=lambda: generateEssay(entryList, parent))
     sendToAiButton.grid(row=1, column=4, sticky="ew", padx=5)
-
-    
