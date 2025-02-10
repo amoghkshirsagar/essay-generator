@@ -4,8 +4,12 @@ from customtkinter import CTk, CTkFrame, CTkButton, CTkLabel, CTkScrollableFrame
 from ai.ai import generate_structured_response, generate_content
 
 
-def generateEssay(topic, word_count, additional_details):
-    essay = generate_content(topic, word_count, additional_details)
+def generateEssay(entryList):
+    topic = entryList['topic']['entry']
+    wordCount = entryList['wordCount']['entry']
+    additionalDetails = entryList['additionalDetails']['entry']
+
+    essay = generate_content(topic.get(), wordCount.get(), additionalDetails.get())
     print(essay)
 
 def chatUI(parent):
@@ -13,16 +17,17 @@ def chatUI(parent):
     entryBoxRow.grid(row=6, column=1, sticky="SEW", padx=5, pady=5)
     entryBoxRow.columnconfigure(3, weight=1)
 
-    topic = ctk.CTkEntry(entryBoxRow, placeholder_text="Topic")
-    topic.grid(row=1, column=1, sticky="ew", padx=5, pady=20)
+    entryList = {
+        "topic": {"label": "Topic", "entry": None},
+        "wordCount": {"label": "Word Count", "entry": None},
+        "additionalDetails": {"label": "Additional Details", "entry": None}
+    }
 
-    wordCount = ctk.CTkEntry(entryBoxRow, placeholder_text="Word Count")
-    wordCount.grid(row=1, column=2, sticky="ew", padx=5, pady=20)
+    for i, (key, value) in enumerate(entryList.items()):
+        value['entry'] = ctk.CTkEntry(entryBoxRow, placeholder_text=value['label'])
+        value['entry'].grid(row=1, column=i+1, sticky="ew", padx=5, pady=20)
 
-    additionalDetails = ctk.CTkEntry(entryBoxRow, placeholder_text="Additonal Details")
-    additionalDetails.grid(row=1, column=3, sticky="ew", padx=5, pady=20)
-
-    sendToAiButton: CTkButton = ctk.CTkButton(entryBoxRow, text="Send ↑", command=lambda: generateEssay(topic.get(), wordCount.get(), additionalDetails.get()))
+    sendToAiButton: CTkButton = ctk.CTkButton(entryBoxRow, text="Send ↑", command=lambda: generateEssay(entryList))
     sendToAiButton.grid(row=1, column=4, sticky="ew", padx=5)
 
     
